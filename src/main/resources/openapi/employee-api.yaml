@@ -1,0 +1,202 @@
+openapi: 3.0.3
+info:
+  title: Employee Management API
+  description: CRUD API for managing employees.
+  version: 1.0.0
+servers:
+  - url: /
+tags:
+  - name: Employee
+    description: Operations for managing employees
+paths:
+  /api/employees:
+    get:
+      tags:
+        - Employee
+      operationId: getAllEmployees
+      summary: Get all employees
+      responses:
+        '200':
+          description: List of employees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EmployeeResponse'
+    post:
+      tags:
+        - Employee
+      operationId: createEmployee
+      summary: Create a new employee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+      responses:
+        '201':
+          description: Employee created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/employees/{id}:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        description: Employee identifier
+        schema:
+          type: integer
+          format: int64
+    get:
+      tags:
+        - Employee
+      operationId: getEmployeeById
+      summary: Get an employee by id
+      responses:
+        '200':
+          description: Employee found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags:
+        - Employee
+      operationId: updateEmployee
+      summary: Update an existing employee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmployeeRequest'
+      responses:
+        '200':
+          description: Employee updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EmployeeResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      tags:
+        - Employee
+      operationId: deleteEmployee
+      summary: Delete an employee
+      responses:
+        '204':
+          description: Employee deleted
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  responses:
+    BadRequest:
+      description: Validation failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    EmployeeRequest:
+      type: object
+      required:
+        - name
+        - salary
+        - department
+        - age
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: John Doe
+        salary:
+          type: number
+          format: double
+          minimum: 0
+          exclusiveMinimum: true
+          example: 55000.00
+        department:
+          type: string
+          minLength: 1
+          maxLength: 100
+          example: Engineering
+        age:
+          type: integer
+          format: int32
+          minimum: 18
+          maximum: 100
+          example: 30
+    EmployeeResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+          example: 1
+        name:
+          type: string
+          example: John Doe
+        salary:
+          type: number
+          format: double
+          example: 55000.00
+        department:
+          type: string
+          example: Engineering
+        age:
+          type: integer
+          format: int32
+          example: 30
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          format: int32
+          example: 404
+        error:
+          type: string
+          example: Not Found
+        message:
+          type: string
+          example: Employee with id 5 not found
+        path:
+          type: string
+          example: /api/employees/5
+        fieldErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldError'
+    FieldError:
+      type: object
+      properties:
+        field:
+          type: string
+          example: age
+        message:
+          type: string
+          example: must be greater than or equal to 18
