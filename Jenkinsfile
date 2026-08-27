@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        jdk 'jdk21'
+    }
+
     environment {
         REMOTE_HOST = "34.207.200.82"
         REMOTE_USER = "ec2-user"
@@ -16,6 +20,7 @@ pipeline {
 
         stage('Build') {
             steps {
+                sh 'echo JAVA_HOME=$JAVA_HOME && which java && java -version'
                 sh 'mvn clean package'
             }
         }
