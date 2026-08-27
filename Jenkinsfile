@@ -6,9 +6,9 @@ pipeline {
     }
 
     environment {
-        REMOTE_HOST = "34.207.200.82"
-        REMOTE_USER = "ec2-user"
-        JAR_NAME    = "backend-0.0.1-SNAPSHOT.jar"
+    REMOTE_HOST = "172.30.2.220"   // private IP, not public
+    REMOTE_USER = "ec2-user"
+    JAR_NAME    = "backend-0.0.1-SNAPSHOT.jar"
     }
 
     stages {
